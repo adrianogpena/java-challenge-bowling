@@ -45,8 +45,13 @@ public class Player {
   private void setFrameCounter(int frameCounter) {
     this.frameCounter = frameCounter;
   }
+
+  private void nextFrame() {
+    setFrameCounter(getFrameCounter() + 1);
+  }
   
-  public void roll(int pinsKnockedDown) {
+  public void roll(int pinsKnockedDown, boolean foul) {
+    System.out.println("Roll action");
     if (pinsKnockedDown > MAX_PINS || pinsKnockedDown < 0) {
       throw new BowlingException("Invalid number of pins: " + pinsKnockedDown);
     }
@@ -57,11 +62,23 @@ public class Player {
       throw new BowlingException("Invalid number of frames: " + (getFrameCounter() + 1));
     }
 
+    // if there is no more attempts and has a ball to score, something is wrong
     if (frame.noMoreAttempts() && !isLastFrame()) {
       throw new BowlingException("Invalid number of attempts on frame " + (getFrameCounter() + 1));
     }
 
-    frame.setRoll(pinsKnockedDown);
+    frame.setRoll(pinsKnockedDown, foul);
+
+    // If is a strike and not the last round, next roll is 0
+    if (frame.getIsStrike() && !isLastFrame()) {
+      System.out.println("Setting the score for the second roll");
+      frame.setRoll(0, false);
+    }
+
+    // if there is no more attempts but it just score a ball, selext the next frame
+    if (frame.noMoreAttempts() && !isLastFrame()) {
+      nextFrame();
+    }
   }
 
   private Frame getCurFrame () {

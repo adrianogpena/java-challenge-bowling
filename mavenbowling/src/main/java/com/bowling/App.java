@@ -13,5 +13,7 @@ public class App {
         game.readFile(sc);
         sc.close();
 
+        game.printPlayers();
+
     }
 }
