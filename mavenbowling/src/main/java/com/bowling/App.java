@@ -13,6 +13,8 @@ public class App {
         game.readFile(sc);
         sc.close();
 
+        game.calcScore();
+
         game.printPlayers();
 
     }

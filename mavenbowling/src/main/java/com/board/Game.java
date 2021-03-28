@@ -26,7 +26,7 @@ public class Game {
       int maxPlayerId = 0;
 
       while (line != null) {
-        System.out.println("=============================================");
+        // System.out.println("=============================================");
         String playerName = line.split(" ")[0];
         int pinsKnockedDown;
         boolean foul = false;
@@ -40,17 +40,17 @@ public class Game {
           pinsKnockedDown = Integer.parseInt(line.split(" ")[1]);
         }
 
-        System.out.println(playerName + " Turn: Pins " + pinsKnockedDown);
+        // System.out.println(playerName + " Turn: Pins " + pinsKnockedDown);
 
         if (!playerMap.containsKey(playerName)) {
-          System.out.println("New player on the board!");
+          // System.out.println("New player on the board!");
           playerMap.put(playerName, maxPlayerId);
           players.add(new Player(playerName));
           maxPlayerId++;
         }
 
-        Player player = getCurrentPlayer(playerName);
-        System.out.println("Player " + player.getName() + " selected!");
+        Player player = getPlayer(playerName);
+        // System.out.println("Player " + player.getName() + " selected!");
         
         player.roll(pinsKnockedDown, foul);
 
@@ -62,13 +62,95 @@ public class Game {
     }
   }
 
-  public void printPlayers() {
-    for (Player player : players) {
-      System.out.println(player);
+  public void calcScore() {
+    for (String name : playerMap.keySet()) {
+      Player player = getPlayer(name);
+      Frame frame;
+      int score = 0;
+
+      // Calc frames from 1 to 8
+      for (int i = 0; i < Player.MAX_FRAMES - 2; i++) {
+        frame = player.getFrame(i);
+        score += frame.getRoll(0) + frame.getRoll(1);
+
+        if (frame.getIsSpare()) {
+          score += player.getFrame(i + 1).getRoll(0);
+        }
+
+        if (frame.getIsStrike()) {
+          if (player.getFrame(i + 1).getIsStrike()) {
+            score += player.getFrame(i + 1).getRoll(0) + player.getFrame(i + 2).getRoll(0);
+          } else {
+            score += player.getFrame(i + 1).getRoll(0) + player.getFrame(i + 1).getRoll(1);
+          }
+        }
+
+        frame.setScore(score);
+      }
+
+      // Calc frame 9
+      frame = player.getFrame(Player.MAX_FRAMES - 2);
+      score += frame.getRoll(0) + frame.getRoll(1);
+
+      if (frame.getIsSpare()) {
+        score += player.getFrame(Player.MAX_FRAMES - 1).getRoll(0);
+      }
+
+      if (frame.getIsStrike()) {
+        score += player.getFrame(Player.MAX_FRAMES - 1).getRoll(0) + player.getFrame(Player.MAX_FRAMES - 1).getRoll(1);
+      }
+
+      frame.setScore(score);
+
+      // Calc fram 10
+      frame = player.getFrame(Player.MAX_FRAMES - 1);
+      score += frame.getRoll(0) + frame.getRoll(1);
+
+      if (frame.getIsSpare() || frame.getIsStrike()) {
+        score += frame.getRoll(2);
+      }
+
+      frame.setScore(score);
     }
   }
 
-  private Player getCurrentPlayer(String name) {
+  public void printPlayers() {
+    System.out.println("Frame  1  2  3  4  5  6  7  8  9  10");
+    for (Player player : players) {
+      System.out.println(player.getName());
+      System.out.print("Pinfalls ");
+      List<Frame> frames = player.getFrames();
+
+      for (Frame frame : frames) {
+        if (frame.getIsStrike()) {
+          System.out.print("  X ");
+          continue;
+        }
+
+        if (frame.getIsSpare()) {
+          System.out.print(frame.getRoll(0) + " / ");
+          continue;
+        }
+
+        System.out.print(frame.getRoll(0) + " " + frame.getRoll(1) + " ");
+
+        if (frame == frames.get(frames.size() - 1)) {
+          System.out.print(frame.getRoll(2) + " ");
+        }
+      }
+
+      System.out.println();
+
+      System.out.print("Score  ");
+      for (Frame frame : frames) {
+        System.out.print(frame.getScore() + "  ");
+      }
+      
+      System.out.println();
+    }
+  }
+
+  private Player getPlayer(String name) {
     return players.get(playerMap.get(name));
   }
   

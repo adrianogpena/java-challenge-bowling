@@ -9,7 +9,7 @@ public class Player {
   private String name;
   private List<Frame> frames;
   private int frameCounter;
-  private static final int MAX_FRAMES = 10;
+  public static final int MAX_FRAMES = 10;
   private static final int MAX_PINS = 10;
 
   public Player(String name) {
@@ -51,12 +51,12 @@ public class Player {
   }
   
   public void roll(int pinsKnockedDown, boolean foul) {
-    System.out.println("Roll action");
+    // System.out.println("Roll action");
     if (pinsKnockedDown > MAX_PINS || pinsKnockedDown < 0) {
       throw new BowlingException("Invalid number of pins: " + pinsKnockedDown);
     }
 
-    Frame frame = getCurFrame();
+    Frame frame = getCurrentFrame();
 
     if (frame == null) {
       throw new BowlingException("Invalid number of frames: " + (getFrameCounter() + 1));
@@ -71,7 +71,7 @@ public class Player {
 
     // If is a strike and not the last round, next roll is 0
     if (frame.getIsStrike() && !isLastFrame()) {
-      System.out.println("Setting the score for the second roll");
+      // System.out.println("Setting the score for the second roll");
       frame.setRoll(0, false);
     }
 
@@ -81,11 +81,38 @@ public class Player {
     }
   }
 
-  private Frame getCurFrame () {
+  public Frame getFrame(int frameNumber) {
+    return frames.get(frameNumber);
+  }
+
+  private Frame getCurrentFrame () {
     return frames.get(getFrameCounter());
   }
 
   private boolean isLastFrame() {
     return getFrameCounter() == MAX_FRAMES - 1;
   }
+
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(getName()).append('\n');
+    sb.append("Frame  Scores\n");
+
+    for (int i = 0; i < MAX_FRAMES; i++) {
+      setFrameCounter(i);
+      Frame frame = getFrame(i);
+      sb.append(i + 1).append("      ").append(frame.getRoll(0)).append(" ").append(frame.getRoll(1));
+
+      if (isLastFrame()) {
+        sb.append(" ").append(frame.getRoll(2));
+      }
+
+      sb.append(" = ").append(frame.getScore()).append('\n');
+    }
+
+    return sb.toString();
+  }
+
 }
