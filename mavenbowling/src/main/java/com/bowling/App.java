@@ -16,6 +16,5 @@ public class App {
         game.calcScore();
 
         game.printPlayers();
-
     }
 }
