@@ -17,11 +17,22 @@ public class Frame {
     isStrike = false;
   }
 
+  // Get value to calculate the score
   public int getRoll(int rollNumber) {
     return (rolls[rollNumber] == -1) ? 0 : rolls[rollNumber];
   }
 
+  // Get value to print on the scoreboard
+  public int getRoll(int rollNumber, boolean checkFoul) {
+    if (checkFoul) {
+      return rolls[rollNumber];
+    } else {
+      return (rolls[rollNumber] == -1) ? 0 : rolls[rollNumber];
+    }
+  }
+
   public void setRoll(int pinsKnockedDown, boolean foul) {
+    // If its a foul play, save as -1, and don't remove any pin that is still up
     if (foul) {
       rolls[numAttempts] = -1;
     } else {
@@ -29,17 +40,13 @@ public class Frame {
       pinsUp -= pinsKnockedDown;
     }
 
-    // System.out.println("Score " + rolls[numAttempts] + " saved! There are still " + pinsUp + " pins up.");
-
     // First ball and no pins up is a STRIKE
     if (numAttempts == 0 && pinsUp == 0) {
-      // System.out.println("STRIKE!");
       isStrike = true;
     }
 
     // Second ball and no pins up is a SPARE
     if (numAttempts == 1 && pinsUp == 0 && !isStrike) {
-      // System.out.println("Spare");
       isSpare = true;
     }
 

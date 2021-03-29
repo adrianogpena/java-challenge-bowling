@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.exceptions.BowlingException;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Player {
   private String name;
   private List<Frame> frames;
@@ -51,27 +53,36 @@ public class Player {
   }
   
   public void roll(int pinsKnockedDown, boolean foul) {
-    // System.out.println("Roll action");
+
+    // Check if the numbers of pins knocked down is between 0 and 10
     if (pinsKnockedDown > MAX_PINS || pinsKnockedDown < 0) {
-      throw new BowlingException("Invalid number of pins: " + pinsKnockedDown);
+      throw new BowlingException("Player " + getName() + " scored an invalid number of pins on frame " +
+                                 (getFrameCounter() + 1) + ": " + pinsKnockedDown);
     }
 
     Frame frame = getCurrentFrame();
 
+    // If the frame is null, than the player tried to play more than 10 frames
     if (frame == null) {
-      throw new BowlingException("Invalid number of frames: " + (getFrameCounter() + 1));
+      throw new BowlingException("Player " + getName() + " tried to play an invalid frame: " + (getFrameCounter() + 1));
     }
 
     // if there is no more attempts and has a ball to score, something is wrong
     if (frame.noMoreAttempts() && !isLastFrame()) {
-      throw new BowlingException("Invalid number of attempts on frame " + (getFrameCounter() + 1));
+      throw new BowlingException("Player " + getName() + " tried to play more attempts on frame " +
+                                 (getFrameCounter() + 1) + " than is permited");
     }
 
+    // If is the last frame and the player made an Strike or an Spare, he is allowed one more shot
+    if (frame.noMoreAttempts() && isLastFrame() && !frame.getIsSpare() && !frame.getIsStrike() ) {
+      throw new BowlingException("Player " + getName() + " not allowed to play the bonus ball on the last frame");
+    }
+
+    // Save the numbers of pin knocked down on the appropriate roll 
     frame.setRoll(pinsKnockedDown, foul);
 
     // If is a strike and not the last round, next roll is 0
     if (frame.getIsStrike() && !isLastFrame()) {
-      // System.out.println("Setting the score for the second roll");
       frame.setRoll(0, false);
     }
 
@@ -93,26 +104,66 @@ public class Player {
     return getFrameCounter() == MAX_FRAMES - 1;
   }
 
-
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(getName()).append('\n');
-    sb.append("Frame  Scores\n");
+    StringBuilder scoreBoard = new StringBuilder();
+    StringBuilder score = new StringBuilder();
+    List<Frame> frames = getFrames();
 
-    for (int i = 0; i < MAX_FRAMES; i++) {
-      setFrameCounter(i);
-      Frame frame = getFrame(i);
-      sb.append(i + 1).append("      ").append(frame.getRoll(0)).append(" ").append(frame.getRoll(1));
+    scoreBoard.append(getName()).append('\n');
+    scoreBoard.append(StringUtils.rightPad("Pinfalls", 10));
 
-      if (isLastFrame()) {
-        sb.append(" ").append(frame.getRoll(2));
+    score.append(StringUtils.rightPad("Score", 10));
+
+    for (Frame frame : frames) {
+      score.append(StringUtils.rightPad(String.valueOf(frame.getScore()), 6));
+      
+      // Set First Ball and Second Ball
+      String firstBall  = String.valueOf(frame.getRoll(0, true));
+      String secondBall = String.valueOf(frame.getRoll(1, true));
+      String thirdBall  = "";
+
+      // Check if it was a foul play
+      firstBall  = (firstBall.equals("-1")) ? "F" : firstBall;
+      secondBall = (secondBall.equals("-1")) ? "F" : secondBall;
+
+      // Check if is a Strike
+      if (frame.getIsStrike()) {
+        firstBall = "";
+        secondBall = "X";
       }
 
-      sb.append(" = ").append(frame.getScore()).append('\n');
+      // Check if is a Spare
+      if (frame.getIsSpare()) {
+        secondBall = "/";
+      }
+
+      // Check if is the last frame
+      if (frame == frames.get(frames.size() - 1)) {
+        // If is a Strike change the value for X
+        firstBall  = (String.valueOf(frame.getRoll(0)).equals("10")) ? "X" : String.valueOf(frame.getRoll(0, true));
+        secondBall = (String.valueOf(frame.getRoll(1)).equals("10")) ? "X" : String.valueOf(frame.getRoll(1, true));
+        thirdBall  = (String.valueOf(frame.getRoll(2)).equals("10")) ? "X" : String.valueOf(frame.getRoll(2, true));
+
+        // Check if it was a foul play
+        firstBall  = (firstBall.equals("-1")) ? "F" : firstBall;
+        secondBall = (secondBall.equals("-1")) ? "F" : secondBall;
+        thirdBall  = (thirdBall.equals("-1")) ? "F" : thirdBall;
+
+        if (frame.getIsSpare()) {
+          secondBall = "/";
+        }
+      }
+
+      scoreBoard.append(StringUtils.rightPad(firstBall, 3))
+                .append(StringUtils.rightPad(secondBall, 3))
+                .append(thirdBall);
+  
     }
 
-    return sb.toString();
+    scoreBoard.append('\n').append(score.toString()).append('\n');
+
+    return scoreBoard.toString();
   }
 
 }

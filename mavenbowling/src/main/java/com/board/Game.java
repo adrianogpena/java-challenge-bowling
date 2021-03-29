@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Game {
   private List<Player> players;
   private LinkedHashMap<String, Integer> playerMap;
@@ -115,43 +117,26 @@ public class Game {
   }
 
   public void printPlayers() {
-    System.out.println("Frame  1  2  3  4  5  6  7  8  9  10");
-    for (Player player : players) {
-      System.out.println(player.getName());
-      System.out.print("Pinfalls ");
-      List<Frame> frames = player.getFrames();
+    StringBuilder scoreBoard = new StringBuilder();
 
-      for (Frame frame : frames) {
-        if (frame.getIsStrike()) {
-          System.out.print("  X ");
-          continue;
-        }
+    scoreBoard.append(StringUtils.rightPad("Frame", 10))
+              .append(StringUtils.rightPad("1", 6))
+              .append(StringUtils.rightPad("2", 6))
+              .append(StringUtils.rightPad("3", 6))
+              .append(StringUtils.rightPad("4", 6))
+              .append(StringUtils.rightPad("5", 6))
+              .append(StringUtils.rightPad("6", 6))
+              .append(StringUtils.rightPad("7", 6))
+              .append(StringUtils.rightPad("8", 6))
+              .append(StringUtils.rightPad("9", 6))
+              .append("10").append('\n');
 
-        if (frame.getIsSpare()) {
-          System.out.print(frame.getRoll(0) + " / ");
-          continue;
-        }
+    players.stream().forEach(player -> scoreBoard.append(player));
 
-        System.out.print(frame.getRoll(0) + " " + frame.getRoll(1) + " ");
-
-        if (frame == frames.get(frames.size() - 1)) {
-          System.out.print(frame.getRoll(2) + " ");
-        }
-      }
-
-      System.out.println();
-
-      System.out.print("Score  ");
-      for (Frame frame : frames) {
-        System.out.print(frame.getScore() + "  ");
-      }
-      
-      System.out.println();
-    }
+    System.out.println(scoreBoard.toString());
   }
 
   private Player getPlayer(String name) {
     return players.get(playerMap.get(name));
-  }
-  
+  } 
 }
