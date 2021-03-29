@@ -2,6 +2,7 @@ package com.board;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.exceptions.BowlingException;
 import com.util.BowlingUtils;
@@ -18,9 +19,7 @@ public class Player {
     setFrameCounter(0);
     frames = new ArrayList<Frame>(MAX_FRAMES);
 
-    for (int i = 0; i < MAX_FRAMES; i++) {
-      frames.add(new Frame(i));
-    }
+    IntStream.range(0, 10).forEach(frameNumber -> frames.add(new Frame(frameNumber)));
   }
 
   public String getName() {
@@ -51,7 +50,7 @@ public class Player {
     setFrameCounter(getFrameCounter() + 1);
   }
   
-  public void roll(int pinsKnockedDown, boolean foul) {
+  public void roll(int pinsKnockedDown, boolean foul) throws BowlingException {
 
     // Check if the numbers of pins knocked down is between 0 and 10
     if (pinsKnockedDown > MAX_PINS || pinsKnockedDown < 0) {
@@ -67,6 +66,7 @@ public class Player {
     }
 
     // if there is no more attempts and has a ball to score, something is wrong
+    // TODO: Is not working, because after two shots it will consider the next shot as the next frame
     if (frame.noMoreAttempts() && !isLastFrame()) {
       throw new BowlingException("Player " + getName() + " tried to play more attempts on frame " +
                                  (getFrameCounter() + 1) + " than is permited");
@@ -105,6 +105,7 @@ public class Player {
 
   @Override
   public String toString() {
+    
     StringBuilder scoreBoard = new StringBuilder();
     StringBuilder score = new StringBuilder();
     List<Frame> frames = getFrames();
@@ -151,6 +152,11 @@ public class Player {
 
         if (frame.getIsSpare()) {
           secondBall = "/";
+        }
+
+        // If it is not a Spare or a Strike, don't consider the third ball
+        if (!frame.getIsSpare() && !frame.getIsStrike()) {
+          thirdBall = "";
         }
       }
 

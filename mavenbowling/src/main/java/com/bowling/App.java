@@ -6,15 +6,17 @@ import com.board.Game;
 
 public class App {
     public static void main( String[] args ) {
-        Game game = new Game();
 
-        // Game setup
-        Scanner sc = new Scanner(System.in);
-        game.readFile(sc);
-        sc.close();
+      Game game = new Game();
 
-        game.calcScore();
+      Scanner sc = new Scanner(System.in);
+      game.readFile(sc);
+      sc.close();
 
-        game.printPlayers();
+      // Calculate the game score
+      game.calcScore();
+
+      // Print the scoreboard
+      game.printPlayers();
     }
 }

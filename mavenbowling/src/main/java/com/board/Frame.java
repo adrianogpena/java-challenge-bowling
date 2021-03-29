@@ -10,7 +10,8 @@ public class Frame {
   private static final int MAX_ATTEMPTS = 2;
 
   public Frame(int frameNumber) {
-    rolls = (frameNumber == 9) ? new int[MAX_ATTEMPTS + 1] : new int[MAX_ATTEMPTS];
+    // rolls = (frameNumber == 9) ? new int[MAX_ATTEMPTS + 1] : new int[MAX_ATTEMPTS];
+    rolls = new int[MAX_ATTEMPTS + 1];
     pinsUp = 10;
     numAttempts = 0;
     isSpare = false;
@@ -24,6 +25,7 @@ public class Frame {
 
   // Get value to print on the scoreboard
   public int getRoll(int rollNumber, boolean checkFoul) {
+
     if (checkFoul) {
       return rolls[rollNumber];
     } else {
@@ -32,6 +34,7 @@ public class Frame {
   }
 
   public void setRoll(int pinsKnockedDown, boolean foul) {
+    
     // If its a foul play, save as -1, and don't remove any pin that is still up
     if (foul) {
       rolls[numAttempts] = -1;

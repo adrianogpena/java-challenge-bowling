@@ -27,7 +27,7 @@ If a foul occurs the score is ignored but the shot is counted.
   ```sh
   mvn clean install
   ```
-3. The file mavenbowling-1.0-SNAPSHOT.jar will be created on targer directory
+3. The file mavenbowling-1.0-SNAPSHOT.jar will be created on target directory
 
 ## Execution
 
@@ -90,3 +90,7 @@ If a foul occurs the score is ignored but the shot is counted.
   Pinfalls  3  /  6  3     X  8  1     X     X  9  0  7  /  4  4  X  9  0
   Score     16    25    44    53    82    101   110   124   132   151
   ```
+
+## Exemples files
+
+Some exemples file are already on directory `src\main\resources\`
