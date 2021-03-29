@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang3.StringUtils;
+import com.util.BowlingUtils;
 
 public class Game {
   private List<Player> players;
@@ -113,9 +113,9 @@ public class Game {
   public void printPlayers() {
     StringBuilder scoreBoard = new StringBuilder();
 
-    scoreBoard.append(StringUtils.rightPad("Frame", 10));
+    scoreBoard.append(BowlingUtils.padRight("Frame", 10));
 
-    IntStream.range(1, 11).forEach(frameNumber -> scoreBoard.append(StringUtils.rightPad(String.valueOf(frameNumber), 6)));
+    IntStream.range(1, 11).forEach(frameNumber -> scoreBoard.append(BowlingUtils.padRight(String.valueOf(frameNumber), 6)));
     scoreBoard.append('\n');
 
     players.stream().forEach(player -> scoreBoard.append(player));

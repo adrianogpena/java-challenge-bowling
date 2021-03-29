@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.exceptions.BowlingException;
-
-import org.apache.commons.lang3.StringUtils;
+import com.util.BowlingUtils;
 
 public class Player {
   private String name;
@@ -111,12 +110,12 @@ public class Player {
     List<Frame> frames = getFrames();
 
     scoreBoard.append(getName()).append('\n');
-    scoreBoard.append(StringUtils.rightPad("Pinfalls", 10));
+    scoreBoard.append(BowlingUtils.padRight("Pinfalls", 10));
 
-    score.append(StringUtils.rightPad("Score", 10));
+    score.append(BowlingUtils.padRight("Score", 10));
 
     for (Frame frame : frames) {
-      score.append(StringUtils.rightPad(String.valueOf(frame.getScore()), 6));
+      score.append(BowlingUtils.padRight(String.valueOf(frame.getScore()), 6));
       
       // Set First Ball and Second Ball
       String firstBall  = String.valueOf(frame.getRoll(0, true));
@@ -155,8 +154,8 @@ public class Player {
         }
       }
 
-      scoreBoard.append(StringUtils.rightPad(firstBall, 3))
-                .append(StringUtils.rightPad(secondBall, 3))
+      scoreBoard.append(BowlingUtils.padRight(firstBall, 3))
+                .append(BowlingUtils.padRight(secondBall, 3))
                 .append(thirdBall);
   
     }
